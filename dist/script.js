@@ -138,7 +138,7 @@ class Slider {
   }
 
   showSlides(n) {
-    /* аргумент n отвечает за то, куда двигается наш слайдер */
+    /* аргумент n отвечает за то, какой сейчас слайд*/
     if (n > this.slides.length) {
       /* если n будет больше, чем общее количество слайдов */
       this.slideIndex = 1;
@@ -158,6 +158,23 @@ class Slider {
     });
     this.slides[this.slideIndex - 1].style.display = 'block';
     /* показываем первый слайд */
+
+    this.teacher = this.slides[2].querySelector('.hanson');
+    /*  получаем из третьего слайда блок с классом .hanson */
+
+    if (n === 3) {
+      /* если третий слайд */
+      this.teacher.style.opacity = '0';
+      /* скрываем */
+
+      setTimeout(() => {
+        /* через три секунды показываем   */
+        this.teacher.style.opacity = '1';
+        this.teacher.classList.add('animated', 'slideInUp');
+      }, 3000);
+    } else {
+      this.teacher.classList.remove('slideInUp');
+    }
   }
 
   plusSlides(n) {
