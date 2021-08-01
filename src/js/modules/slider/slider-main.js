@@ -1,11 +1,8 @@
-export default class Slider { /* Называем класс слайдер */
-    /* Описываем класс кодом, который будет у нас на странице */
-    constructor(page, btns) { /* В конструктор помещаем свойства (какая страница, какая кнопка) */
-        /* Создаем свойства нового объекта */
-        this.page = document.querySelector(page); /* получаем текущую страницу */
-        this.slides = this.page.children; /* получаем детей (каждый отдельный блок) текущей страницы */
-        this.btns = document.querySelectorAll(btns); /* получаем все текущие кнопки */
-        this.slideIndex = 1; /* текущий слайд равен 1 */
+import Slider from './slider';
+
+export default class MainSlider extends Slider { /* Главный слайдер будет наследоваться от слайдера */
+    constructor(page, btns) { /* передаем свойства, которые понадобятся из прототипа */
+        super(page, btns);
     }
 
     showSlides(n) { /* аргумент n отвечает за то, какой сейчас слайд*/
