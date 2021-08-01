@@ -96,18 +96,43 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_slider_slider_main__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/slider/slider-main */ "./src/js/modules/slider/slider-main.js");
-/* harmony import */ var _modules_playVideo__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/playVideo */ "./src/js/modules/playVideo.js");
+/* harmony import */ var _modules_slider_slider_mini__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/slider/slider-mini */ "./src/js/modules/slider/slider-mini.js");
+/* harmony import */ var _modules_playVideo__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/playVideo */ "./src/js/modules/playVideo.js");
+
 
 
 window.addEventListener('DOMContentLoaded', () => {
   const slider = new _modules_slider_slider_main__WEBPACK_IMPORTED_MODULE_0__["default"]({
+    /* Создаем новый объект (экземпляр класса) на основе класса */
     btns: '.next',
-    page: '.page'
+    container: '.page'
   });
-  /* Создаем новый объект (экземпляр класса) на основе класса */
-
   slider.render();
-  const player = new _modules_playVideo__WEBPACK_IMPORTED_MODULE_1__["default"]('.showup .play', '.overlay');
+  const showUpSlider = new _modules_slider_slider_mini__WEBPACK_IMPORTED_MODULE_1__["default"]({
+    container: '.showup__content-slider',
+    next: '.showup__next',
+    prev: '.showup__prev',
+    activeClass: 'card-active',
+    animate: true
+  });
+  showUpSlider.init();
+  const modulesSlider = new _modules_slider_slider_mini__WEBPACK_IMPORTED_MODULE_1__["default"]({
+    container: '.modules__content-slider',
+    next: '.modules__info-btns .slick-next',
+    prev: '.modules__info-btns .slick-prev',
+    activeClass: 'card-active',
+    animate: true,
+    autoplay: true
+  });
+  modulesSlider.init();
+  const feedSlider = new _modules_slider_slider_mini__WEBPACK_IMPORTED_MODULE_1__["default"]({
+    container: '.feed__slider',
+    next: '.feed__slider .slick-next',
+    prev: '.feed__slider .slick-prev',
+    activeClass: 'feed__item-active'
+  });
+  feedSlider.init();
+  const player = new _modules_playVideo__WEBPACK_IMPORTED_MODULE_2__["default"]('.showup .play', '.overlay');
   player.init();
 });
 
@@ -215,9 +240,9 @@ __webpack_require__.r(__webpack_exports__);
 
 class MainSlider extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
   /* Главный слайдер будет наследоваться от слайдера */
-  constructor(page, btns) {
+  constructor(btns) {
     /* передаем свойства, которые понадобятся из прототипа */
-    super(page, btns);
+    super(btns);
   }
 
   showSlides(n) {
@@ -300,6 +325,96 @@ class MainSlider extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
 
 /***/ }),
 
+/***/ "./src/js/modules/slider/slider-mini.js":
+/*!**********************************************!*\
+  !*** ./src/js/modules/slider/slider-mini.js ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return MiniSlider; });
+/* harmony import */ var _slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./slider */ "./src/js/modules/slider/slider.js");
+
+class MiniSlider extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
+  constructor(container, next, prev, activeClass, animate, autoplay) {
+    super(container, next, prev, activeClass, animate, autoplay);
+  }
+
+  decorizeSlides() {
+    [...this.slides].forEach(slide => {
+      slide.classList.remove(this.activeClass);
+
+      if (this.animate) {
+        slide.querySelector('.card__title').style.opacity = '0.4';
+        slide.querySelector('.card__controls-arrow').style.opacity = '0';
+      }
+    });
+
+    if (!this.slides[0].closest('button')) {
+      this.slides[0].classList.add(this.activeClass);
+    }
+
+    if (this.animate) {
+      this.slides[0].querySelector('.card__title').style.opacity = '1';
+      this.slides[0].querySelector('.card__controls-arrow').style.opacity = '1';
+    }
+  }
+
+  nextSlide() {
+    if (this.prev.parentNode === this.container) {
+      this.container.insertBefore(this.slides[0], this.prev);
+    } else {
+      this.container.appendChild(this.slides[0]);
+    }
+
+    this.decorizeSlides();
+  }
+
+  bindTriggers() {
+    this.next.addEventListener('click', () => this.nextSlide());
+    this.prev.addEventListener('click', () => {
+      for (let i = this.slides.length - 1; i > 0; i--) {
+        if (this.slides[i].tagName !== 'BUTTON') {
+          let active = this.slides[i];
+          this.container.insertBefore(active, this.slides[0]);
+          this.decorizeSlides();
+          break;
+        }
+      }
+    });
+  }
+
+  activateAnimation() {
+    this.paused = setInterval(() => this.nextSlide(), 5000);
+  }
+
+  init() {
+    this.container.style.cssText = `
+            display: flex;
+            flex-wrap: wrap;
+            overflow: hidden;
+            align-items: flex-start;
+        `;
+    this.bindTriggers();
+    this.decorizeSlides();
+
+    if (this.autoplay) {
+      this.container.addEventListener('mouseenter', () => clearInterval(this.paused));
+      this.next.addEventListener('mouseenter', () => clearInterval(this.paused));
+      this.prev.addEventListener('mouseenter', () => clearInterval(this.paused));
+      this.container.addEventListener('mouseleave', () => this.activateAnimation());
+      this.next.addEventListener('mouseleave', () => this.activateAnimation());
+      this.prev.addEventListener('mouseleave', () => this.activateAnimation());
+      this.activateAnimation();
+    }
+  }
+
+}
+
+/***/ }),
+
 /***/ "./src/js/modules/slider/slider.js":
 /*!*****************************************!*\
   !*** ./src/js/modules/slider/slider.js ***!
@@ -315,23 +430,31 @@ class Slider {
 
   /* Описываем класс кодом, который будет у нас на странице */
   constructor({
-    page = '',
-    btns = '',
-    next = '',
-    prev = ''
+    container = null,
+    btns = null,
+    next = null,
+    prev = null,
+    activeClass = '',
+    animate,
+    autoplay
   } = {}) {
-    /* В конструктор помещаем свойства в качестве объекта со значением по умолчанию (какая страница, какая кнопка) */
+    /* В конструктор помещаем свойства в качестве объекта со значением по умолчанию (какой контейнер, какая кнопка) */
 
     /* Создаем свойства нового объекта */
-    this.page = document.querySelector(page);
+    this.container = document.querySelector(container);
     /* получаем текущую страницу */
 
-    this.slides = this.page.children;
+    this.slides = this.container.children;
     /* получаем детей (каждый отдельный блок) текущей страницы */
 
     this.btns = document.querySelectorAll(btns);
     /* получаем все текущие кнопки */
 
+    this.next = document.querySelector(next);
+    this.prev = document.querySelector(prev);
+    this.activeClass = activeClass;
+    this.animate = animate;
+    this.autoplay = autoplay;
     this.slideIndex = 1;
     /* текущий слайд равен 1 */
   }
