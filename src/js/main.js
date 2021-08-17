@@ -13,6 +13,14 @@ window.addEventListener('DOMContentLoaded', () => {
     }); 
     slider.render();
 
+    const modulePageSlider = new MainSlider({
+        btns: '.sidecontrol__controls .next',
+        container: '.moduleapp',
+        prev: '.prevmodule',
+        next: '.nextmodule'
+    });
+    modulePageSlider.render();
+
     const showUpSlider = new MiniSlider({
         container: '.showup__content-slider', 
         next: '.showup__next', 

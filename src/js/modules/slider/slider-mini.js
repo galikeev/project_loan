@@ -34,19 +34,23 @@ export default class MiniSlider extends Slider { /* Мини слайдер бу
     }
 
     bindTriggers() {
-        this.next.addEventListener('click', () => this.nextSlide()); /* при клике на кнопку вперед запускаем метод nextSlide */
+        this.next.forEach(item => {
+            item.addEventListener('click', () => this.nextSlide());
+        }); /* при клике на кнопку вперед запускаем метод nextSlide */
 
-        this.prev.addEventListener('click', () => { /* при клике на кнопку назад запускаем цикл */
+        this.prev.forEach(item => {
+            item.addEventListener('click', () => { /* при клике на кнопку назад запускаем цикл */
 
-            for (let i = this.slides.length - 1; i > 0; i--) { /* запускаем цикл с последнего элемента */
-                if (this.slides[i].tagName !== 'BUTTON') { /* если элемент с конца не является кнопкой */
-                    this.container.insertBefore(this.slides[i], this.slides[0]); /* последний элемент не кнопку помещаем перед первым элементом */
-                    this.decorizeSlides();
-                    break;
+                for (let i = this.slides.length - 1; i > 0; i--) { /* запускаем цикл с последнего элемента */
+                    if (this.slides[i].tagName !== 'BUTTON') { /* если элемент с конца не является кнопкой */
+                        this.container.insertBefore(this.slides[i], this.slides[0]); /* последний элемент не кнопку помещаем перед первым элементом */
+                        this.decorizeSlides();
+                        break;
+                    }
                 }
-            }
-
-            
+    
+                
+            });
         });
     }
 
@@ -55,24 +59,26 @@ export default class MiniSlider extends Slider { /* Мини слайдер бу
     }
 
     init() {
-        this.container.style.cssText = `
+        try {
+            this.container.style.cssText = `
             display: flex;
             flex-wrap: wrap;
             overflow: hidden;
             align-items: flex-start;
-        `;
+            `;
 
-        this.bindTriggers();
-        this.decorizeSlides();
+            this.bindTriggers();
+            this.decorizeSlides();
 
-        if (this.autoplay) { /* если есть автоплэй, то вешаем событие на блок и стрелки */
-            this.container.addEventListener('mouseenter', () => clearInterval(this.paused));
-            this.next.addEventListener('mouseenter', () => clearInterval(this.paused));
-            this.prev.addEventListener('mouseenter', () => clearInterval(this.paused));
-            this.container.addEventListener('mouseleave', () => this.activateAnimation());
-            this.next.addEventListener('mouseleave', () => this.activateAnimation());
-            this.prev.addEventListener('mouseleave', () => this.activateAnimation());
-            this.activateAnimation();
-        }
+            if (this.autoplay) { /* если есть автоплэй, то вешаем событие на блок и стрелки */
+                this.container.addEventListener('mouseenter', () => clearInterval(this.paused));
+                this.next.addEventListener('mouseenter', () => clearInterval(this.paused));
+                this.prev.addEventListener('mouseenter', () => clearInterval(this.paused));
+                this.container.addEventListener('mouseleave', () => this.activateAnimation());
+                this.next.addEventListener('mouseleave', () => this.activateAnimation());
+                this.prev.addEventListener('mouseleave', () => this.activateAnimation());
+                this.activateAnimation();
+            }
+        } catch(e){}
     }
 }

@@ -15,19 +15,23 @@ export default class Difference {
     }
 
     bindTriggers() {
-        this.officer.querySelector('.plus').addEventListener('click', () => {
-            this.items[this.counter].style.display = 'flex';
-            this.items[this.counter].classList.add('fadeIn');
-            if (this.counter !== this.items.length - 2) { /* если счетчик не равняется последним двум элементам */
-                this.counter++; 
-            } else {
-                this.items[this.items.length - 1].remove(); /* удаляем последний элемент */
-            }
-        });
+        try {
+            this.officer.querySelector('.plus').addEventListener('click', () => {
+                this.items[this.counter].style.display = 'flex';
+                this.items[this.counter].classList.add('fadeIn');
+                if (this.counter !== this.items.length - 2) { /* если счетчик не равняется последним двум элементам */
+                    this.counter++; 
+                } else {
+                    this.items[this.items.length - 1].remove(); /* удаляем последний элемент */
+                }
+            });
+        } catch(e){}
     }
 
     init() {
-        this.hideItems();
-        this.bindTriggers();
+        try {
+            this.hideItems();
+            this.bindTriggers();
+        } catch(e){}
     }
 }

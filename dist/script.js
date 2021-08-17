@@ -112,6 +112,13 @@ window.addEventListener('DOMContentLoaded', () => {
     container: '.page'
   });
   slider.render();
+  const modulePageSlider = new _modules_slider_slider_main__WEBPACK_IMPORTED_MODULE_0__["default"]({
+    btns: '.sidecontrol__controls .next',
+    container: '.moduleapp',
+    prev: '.prevmodule',
+    next: '.nextmodule'
+  });
+  modulePageSlider.render();
   const showUpSlider = new _modules_slider_slider_mini__WEBPACK_IMPORTED_MODULE_1__["default"]({
     container: '.showup__content-slider',
     next: '.showup__next',
@@ -176,23 +183,27 @@ class Difference {
   }
 
   bindTriggers() {
-    this.officer.querySelector('.plus').addEventListener('click', () => {
-      this.items[this.counter].style.display = 'flex';
-      this.items[this.counter].classList.add('fadeIn');
+    try {
+      this.officer.querySelector('.plus').addEventListener('click', () => {
+        this.items[this.counter].style.display = 'flex';
+        this.items[this.counter].classList.add('fadeIn');
 
-      if (this.counter !== this.items.length - 2) {
-        /* если счетчик не равняется последним двум элементам */
-        this.counter++;
-      } else {
-        this.items[this.items.length - 1].remove();
-        /* удаляем последний элемент */
-      }
-    });
+        if (this.counter !== this.items.length - 2) {
+          /* если счетчик не равняется последним двум элементам */
+          this.counter++;
+        } else {
+          this.items[this.items.length - 1].remove();
+          /* удаляем последний элемент */
+        }
+      });
+    } catch (e) {}
   }
 
   init() {
-    this.hideItems();
-    this.bindTriggers();
+    try {
+      this.hideItems();
+      this.bindTriggers();
+    } catch (e) {}
   }
 
 }
@@ -463,9 +474,9 @@ __webpack_require__.r(__webpack_exports__);
 
 class MainSlider extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
   /* Главный слайдер будет наследоваться от слайдера */
-  constructor(btns) {
+  constructor(btns, prev, next) {
     /* передаем свойства, которые понадобятся из прототипа */
-    super(btns);
+    super(btns, prev, next);
   }
 
   showSlides(n) {
@@ -490,32 +501,29 @@ class MainSlider extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
     this.slides[this.slideIndex - 1].style.display = 'block';
     /* показываем первый слайд */
 
-    this.teacher = this.slides[2].querySelector('.hanson');
-    /*  получаем из третьего слайда блок с классом .hanson */
+    try {
+      if (n === 3) {
+        /* если третий слайд */
+        this.teacher.style.opacity = '0';
+        /* скрываем */
 
-    if (n === 3) {
-      /* если третий слайд */
-      this.teacher.style.opacity = '0';
-      /* скрываем */
-
-      setTimeout(() => {
-        /* через три секунды показываем   */
-        this.teacher.style.opacity = '1';
-        this.teacher.classList.add('animated', 'slideInUp');
-      }, 3000);
-    } else {
-      this.teacher.classList.remove('slideInUp');
-    }
+        setTimeout(() => {
+          /* через три секунды показываем   */
+          this.teacher.style.opacity = '1';
+          this.teacher.classList.add('animated', 'slideInUp');
+        }, 3000);
+      } else {
+        this.teacher.classList.remove('slideInUp');
+      }
+    } catch (e) {}
   }
 
   plusSlides(n) {
     /* отвечает за переключение слайдера */
     this.showSlides(this.slideIndex += n);
   }
-  /* Создаем метод рендер (что-то рендериться на странице) */
 
-
-  render() {
+  bindTriggers() {
     this.btns.forEach(btn => {
       /* перебираем все кнопки и на каждую кнопку вешаем клик */
       btn.addEventListener('click', () => {
@@ -537,11 +545,44 @@ class MainSlider extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
         this.showSlides(this.slideIndex);
         /* вызываем функцию с первым слайдом */
 
+        this.slides[this.slideIndex - 1].classList.remove('slideInLeft');
         this.slides[this.slideIndex - 1].classList.add('slideInDown');
       });
     });
-    this.showSlides(this.slideIndex);
-    /* вызываем первичную инициализацию, показываем текущий (первый) слайд */
+    [...this.prev].forEach(item => {
+      item.addEventListener('click', e => {
+        e.stopPropagation();
+        e.preventDefault();
+        this.plusSlides(-1);
+        this.slides[this.slideIndex - 1].classList.remove('slideInRight');
+        this.slides[this.slideIndex - 1].classList.add('slideInLeft');
+      });
+    });
+    [...this.next].forEach(item => {
+      item.addEventListener('click', e => {
+        e.stopPropagation();
+        e.preventDefault();
+        this.plusSlides(1);
+        this.slides[this.slideIndex - 1].classList.remove('slideInLeft');
+        this.slides[this.slideIndex - 1].classList.add('slideInRight');
+      });
+    });
+  }
+  /* Создаем метод рендер (что-то рендериться на странице) */
+
+
+  render() {
+    if (this.container) {
+      try {
+        this.teacher = document.querySelector('.hanson');
+        /*  получаем из третьего слайда блок с классом .hanson */
+      } catch (e) {}
+
+      this.showSlides(this.slideIndex);
+      /* вызываем первичную инициализацию, показываем текущий (первый) слайд */
+
+      this.bindTriggers();
+    }
   }
 
 }
@@ -606,22 +647,26 @@ class MiniSlider extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
   }
 
   bindTriggers() {
-    this.next.addEventListener('click', () => this.nextSlide());
+    this.next.forEach(item => {
+      item.addEventListener('click', () => this.nextSlide());
+    });
     /* при клике на кнопку вперед запускаем метод nextSlide */
 
-    this.prev.addEventListener('click', () => {
-      /* при клике на кнопку назад запускаем цикл */
-      for (let i = this.slides.length - 1; i > 0; i--) {
-        /* запускаем цикл с последнего элемента */
-        if (this.slides[i].tagName !== 'BUTTON') {
-          /* если элемент с конца не является кнопкой */
-          this.container.insertBefore(this.slides[i], this.slides[0]);
-          /* последний элемент не кнопку помещаем перед первым элементом */
+    this.prev.forEach(item => {
+      item.addEventListener('click', () => {
+        /* при клике на кнопку назад запускаем цикл */
+        for (let i = this.slides.length - 1; i > 0; i--) {
+          /* запускаем цикл с последнего элемента */
+          if (this.slides[i].tagName !== 'BUTTON') {
+            /* если элемент с конца не является кнопкой */
+            this.container.insertBefore(this.slides[i], this.slides[0]);
+            /* последний элемент не кнопку помещаем перед первым элементом */
 
-          this.decorizeSlides();
-          break;
+            this.decorizeSlides();
+            break;
+          }
         }
-      }
+      });
     });
   }
 
@@ -630,25 +675,27 @@ class MiniSlider extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
   }
 
   init() {
-    this.container.style.cssText = `
+    try {
+      this.container.style.cssText = `
             display: flex;
             flex-wrap: wrap;
             overflow: hidden;
             align-items: flex-start;
-        `;
-    this.bindTriggers();
-    this.decorizeSlides();
+            `;
+      this.bindTriggers();
+      this.decorizeSlides();
 
-    if (this.autoplay) {
-      /* если есть автоплэй, то вешаем событие на блок и стрелки */
-      this.container.addEventListener('mouseenter', () => clearInterval(this.paused));
-      this.next.addEventListener('mouseenter', () => clearInterval(this.paused));
-      this.prev.addEventListener('mouseenter', () => clearInterval(this.paused));
-      this.container.addEventListener('mouseleave', () => this.activateAnimation());
-      this.next.addEventListener('mouseleave', () => this.activateAnimation());
-      this.prev.addEventListener('mouseleave', () => this.activateAnimation());
-      this.activateAnimation();
-    }
+      if (this.autoplay) {
+        /* если есть автоплэй, то вешаем событие на блок и стрелки */
+        this.container.addEventListener('mouseenter', () => clearInterval(this.paused));
+        this.next.addEventListener('mouseenter', () => clearInterval(this.paused));
+        this.prev.addEventListener('mouseenter', () => clearInterval(this.paused));
+        this.container.addEventListener('mouseleave', () => this.activateAnimation());
+        this.next.addEventListener('mouseleave', () => this.activateAnimation());
+        this.prev.addEventListener('mouseleave', () => this.activateAnimation());
+        this.activateAnimation();
+      }
+    } catch (e) {}
   }
 
 }
@@ -684,14 +731,17 @@ class Slider {
     this.container = document.querySelector(container);
     /* получаем текущую страницу */
 
-    this.slides = this.container.children;
+    try {
+      this.slides = this.container.children;
+    } catch (e) {}
     /* получаем детей (каждый отдельный блок) текущей страницы */
+
 
     this.btns = document.querySelectorAll(btns);
     /* получаем все текущие кнопки */
 
-    this.next = document.querySelector(next);
-    this.prev = document.querySelector(prev);
+    this.next = document.querySelectorAll(next);
+    this.prev = document.querySelectorAll(prev);
     this.activeClass = activeClass;
     this.animate = animate;
     this.autoplay = autoplay;
