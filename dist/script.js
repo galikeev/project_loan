@@ -546,6 +546,7 @@ class MainSlider extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
         /* вызываем функцию с первым слайдом */
 
         this.slides[this.slideIndex - 1].classList.remove('slideInLeft');
+        this.slides[this.slideIndex - 1].classList.remove('slideInRight');
         this.slides[this.slideIndex - 1].classList.add('slideInDown');
       });
     });
@@ -554,6 +555,8 @@ class MainSlider extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
         e.stopPropagation();
         e.preventDefault();
         this.plusSlides(-1);
+        this.slides[this.slideIndex - 1].classList.remove('slideOutUp');
+        this.slides[this.slideIndex - 1].classList.remove('slideInUp');
         this.slides[this.slideIndex - 1].classList.remove('slideInRight');
         this.slides[this.slideIndex - 1].classList.add('slideInLeft');
       });
@@ -563,6 +566,8 @@ class MainSlider extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
         e.stopPropagation();
         e.preventDefault();
         this.plusSlides(1);
+        this.slides[this.slideIndex - 1].classList.remove('slideOutUp');
+        this.slides[this.slideIndex - 1].classList.remove('slideInUp');
         this.slides[this.slideIndex - 1].classList.remove('slideInLeft');
         this.slides[this.slideIndex - 1].classList.add('slideInRight');
       });

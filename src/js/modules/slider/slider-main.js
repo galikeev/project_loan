@@ -51,6 +51,7 @@ export default class MainSlider extends Slider { /* Главный слайде�
                 this.slideIndex = 1; /* текущему слайду назначаем единицу */
                 this.showSlides(this.slideIndex); /* вызываем функцию с первым слайдом */
                 this.slides[this.slideIndex - 1].classList.remove('slideInLeft');
+                this.slides[this.slideIndex - 1].classList.remove('slideInRight');
                 this.slides[this.slideIndex - 1].classList.add('slideInDown');
             });
         });
@@ -60,6 +61,8 @@ export default class MainSlider extends Slider { /* Главный слайде�
                 e.stopPropagation();
                 e.preventDefault();
                 this.plusSlides(-1);
+                this.slides[this.slideIndex - 1].classList.remove('slideOutUp');
+                this.slides[this.slideIndex - 1].classList.remove('slideInUp');
                 this.slides[this.slideIndex - 1].classList.remove('slideInRight');
                 this.slides[this.slideIndex - 1].classList.add('slideInLeft');
             });
@@ -70,6 +73,8 @@ export default class MainSlider extends Slider { /* Главный слайде�
                 e.stopPropagation();
                 e.preventDefault();
                 this.plusSlides(1);
+                this.slides[this.slideIndex - 1].classList.remove('slideOutUp');
+                this.slides[this.slideIndex - 1].classList.remove('slideInUp');
                 this.slides[this.slideIndex - 1].classList.remove('slideInLeft');
                 this.slides[this.slideIndex - 1].classList.add('slideInRight');
             });
