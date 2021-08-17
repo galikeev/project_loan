@@ -48,15 +48,12 @@ window.addEventListener('DOMContentLoaded', () => {
     });
     feedSlider.init();
 
-    const player = new VideoPlayer('.showup .play', '.overlay');
-    player.init();
+    new VideoPlayer('.showup .play', '.overlay').init();
+    new VideoPlayer('.module__video-item .play', '.overlay').init();
 
-    const differenceOld = new Difference('.officerold', '.officerold .officer__card-item');
-    differenceOld.init();
+    new Difference('.officerold', '.officerold .officer__card-item').init();
 
-    const differenceNew = new Difference('.officernew', '.officernew .officer__card-item');
-    differenceNew.init();
+    new Difference('.officernew', '.officernew .officer__card-item').init();
 
-    const form = new Form('.form');
-    form.init();
+    new Form('.form').init();
 });

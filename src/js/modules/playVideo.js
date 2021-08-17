@@ -11,9 +11,13 @@ export default class VideoPlayer {
                 if (document.querySelector('iframe#frame')) { /* если плеер уже есть, то есть такой iframe с таким id */
                     this.overlay.style.display = 'flex'; /* то просто показываем overlay */
                     this.overlay.classList.add('animated', 'fadeIn');
+                    if (this.path !== btn.getAttribute('data-url')) {
+                        this.path = btn.getAttribute('data-url');
+                        this.player.loadVideoById({videoId: this.path});
+                    }
                 } else { /* если плеер еще не запускался */
-                    const path = btn.getAttribute('data-url'); /* получаем url из кнопки */
-                    this.createPlayer(path); /* создаем плеер */
+                    this.path = btn.getAttribute('data-url'); /* получаем url из кнопки */
+                    this.createPlayer(this.path); /* создаем плеер */
                 }
             });
         });
@@ -44,12 +48,14 @@ export default class VideoPlayer {
     }
 
     init() { /* инициализация всего функционала */
-        const tag = document.createElement('script'); /* создаем элемент скрипт */
-        tag.src = "https://www.youtube.com/iframe_api"; /* устанавливаем атрибут src */
-        const firstScriptTag = document.getElementsByTagName('script')[0]; /* находим первый скрипт */
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag); /* перед первым нашим скриптом добавляем этот скрипт */
+        if (this.btns.length > 0) {
+            const tag = document.createElement('script'); /* создаем элемент скрипт */
+            tag.src = "https://www.youtube.com/iframe_api"; /* устанавливаем атрибут src */
+            const firstScriptTag = document.getElementsByTagName('script')[0]; /* находим первый скрипт */
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag); /* перед первым нашим скриптом добавляем этот скрипт */
 
-        this.bindTriggers();
-        this.bindClose();
+            this.bindTriggers();
+            this.bindClose();
+        }
     }
 }

@@ -143,14 +143,11 @@ window.addEventListener('DOMContentLoaded', () => {
     activeClass: 'feed__item-active'
   });
   feedSlider.init();
-  const player = new _modules_playVideo__WEBPACK_IMPORTED_MODULE_2__["default"]('.showup .play', '.overlay');
-  player.init();
-  const differenceOld = new _modules_difference__WEBPACK_IMPORTED_MODULE_3__["default"]('.officerold', '.officerold .officer__card-item');
-  differenceOld.init();
-  const differenceNew = new _modules_difference__WEBPACK_IMPORTED_MODULE_3__["default"]('.officernew', '.officernew .officer__card-item');
-  differenceNew.init();
-  const form = new _modules_forms__WEBPACK_IMPORTED_MODULE_4__["default"]('.form');
-  form.init();
+  new _modules_playVideo__WEBPACK_IMPORTED_MODULE_2__["default"]('.showup .play', '.overlay').init();
+  new _modules_playVideo__WEBPACK_IMPORTED_MODULE_2__["default"]('.module__video-item .play', '.overlay').init();
+  new _modules_difference__WEBPACK_IMPORTED_MODULE_3__["default"]('.officerold', '.officerold .officer__card-item').init();
+  new _modules_difference__WEBPACK_IMPORTED_MODULE_3__["default"]('.officernew', '.officernew .officer__card-item').init();
+  new _modules_forms__WEBPACK_IMPORTED_MODULE_4__["default"]('.form').init();
 });
 
 /***/ }),
@@ -399,12 +396,19 @@ class VideoPlayer {
           /* то просто показываем overlay */
 
           this.overlay.classList.add('animated', 'fadeIn');
+
+          if (this.path !== btn.getAttribute('data-url')) {
+            this.path = btn.getAttribute('data-url');
+            this.player.loadVideoById({
+              videoId: this.path
+            });
+          }
         } else {
           /* если плеер еще не запускался */
-          const path = btn.getAttribute('data-url');
+          this.path = btn.getAttribute('data-url');
           /* получаем url из кнопки */
 
-          this.createPlayer(path);
+          this.createPlayer(this.path);
           /* создаем плеер */
         }
       });
@@ -440,20 +444,22 @@ class VideoPlayer {
 
   init() {
     /* инициализация всего функционала */
-    const tag = document.createElement('script');
-    /* создаем элемент скрипт */
+    if (this.btns.length > 0) {
+      const tag = document.createElement('script');
+      /* создаем элемент скрипт */
 
-    tag.src = "https://www.youtube.com/iframe_api";
-    /* устанавливаем атрибут src */
+      tag.src = "https://www.youtube.com/iframe_api";
+      /* устанавливаем атрибут src */
 
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    /* находим первый скрипт */
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      /* находим первый скрипт */
 
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    /* перед первым нашим скриптом добавляем этот скрипт */
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      /* перед первым нашим скриптом добавляем этот скрипт */
 
-    this.bindTriggers();
-    this.bindClose();
+      this.bindTriggers();
+      this.bindClose();
+    }
   }
 
 }
@@ -530,24 +536,26 @@ class MainSlider extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
         this.plusSlides(1);
         /* переключаем слайдер на единицу вперед */
 
-        this.slides[this.slideIndex - 1].classList.remove('slideOutUp');
         this.slides[this.slideIndex - 1].classList.add('slideInUp');
         /* добавляем анимацию */
       });
       btn.parentNode.previousElementSibling.addEventListener('click', e => {
         /* выходим на родителя кнопки и от родителя идем к предидущему элементу (это будет логотип) и назначаем ему клик */
-        e.preventDefault();
-        /* отменяем стандартное поведение браузера */
+        if (this.slideIndex !== 1) {
+          /* если не первый слайд */
+          e.preventDefault();
+          /* отменяем стандартное поведение браузера */
 
-        this.slideIndex = 1;
-        /* текущему слайду назначаем единицу */
+          this.slideIndex = 1;
+          /* текущему слайду назначаем единицу */
 
-        this.showSlides(this.slideIndex);
-        /* вызываем функцию с первым слайдом */
+          this.showSlides(this.slideIndex);
+          /* вызываем функцию с первым слайдом */
 
-        this.slides[this.slideIndex - 1].classList.remove('slideInLeft');
-        this.slides[this.slideIndex - 1].classList.remove('slideInRight');
-        this.slides[this.slideIndex - 1].classList.add('slideInDown');
+          this.slides[this.slideIndex - 1].classList.remove('slideInLeft');
+          this.slides[this.slideIndex - 1].classList.remove('slideInRight');
+          this.slides[this.slideIndex - 1].classList.add('slideInDown');
+        }
       });
     });
     [...this.prev].forEach(item => {
@@ -555,7 +563,6 @@ class MainSlider extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
         e.stopPropagation();
         e.preventDefault();
         this.plusSlides(-1);
-        this.slides[this.slideIndex - 1].classList.remove('slideOutUp');
         this.slides[this.slideIndex - 1].classList.remove('slideInUp');
         this.slides[this.slideIndex - 1].classList.remove('slideInRight');
         this.slides[this.slideIndex - 1].classList.add('slideInLeft');
@@ -566,7 +573,6 @@ class MainSlider extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
         e.stopPropagation();
         e.preventDefault();
         this.plusSlides(1);
-        this.slides[this.slideIndex - 1].classList.remove('slideOutUp');
         this.slides[this.slideIndex - 1].classList.remove('slideInUp');
         this.slides[this.slideIndex - 1].classList.remove('slideInLeft');
         this.slides[this.slideIndex - 1].classList.add('slideInRight');
